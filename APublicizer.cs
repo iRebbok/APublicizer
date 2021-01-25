@@ -209,8 +209,8 @@ namespace APublicizer
 
             void ProcessEvent(EventDefinition e)
             {
-                // 1 event is 3 methods
-                value.Methods -= 3;
+                // 1 event is almost 3 methods
+                value.Methods -= e.InvokeMethod != null ? 3 : 2;
 
                 e.AddMethod.IsPublic = true;
                 e.RemoveMethod.IsPublic = true;
