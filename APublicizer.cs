@@ -28,6 +28,7 @@ namespace APublicizer
 
             Console.WriteLine("Publicize result - ");
             Console.WriteLine($"\tTypes - {result.Types}");
+            Console.WriteLine($"\tNestedTypes - {result.NestedTypes}");
             Console.WriteLine($"\tEvents - {result.Events}");
             Console.WriteLine($"\tFields - {result.Fields}");
             Console.WriteLine($"\tMethods - {result.Methods}");
