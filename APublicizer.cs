@@ -163,14 +163,14 @@ namespace APublicizer
 
         private void DoPublicizeTypes(PublicizeResult value) =>
             Processor<TypeDefinition>(GetTypes(),
-                (t) => t.IsNotPublic,
+                (t) => !t.IsPublic,
                 (t) => t.IsPublic = true,
                 value.BumpTypes);
 
         private void DoPublicizeNestedTypes(PublicizeResult value) =>
             Processor<TypeDefinition>(GetTypes(),
-                (nt) => nt.IsNestedPrivate,
-                (nt) => nt.IsPublic = true,
+                (nt) => !nt.IsNestedPublic,
+                (nt) => nt.IsNestedPublic = true,
                 value.BumpNestedTypes);
 
         private void DoPublicizeFields(PublicizeResult value) =>
