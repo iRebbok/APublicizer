@@ -101,6 +101,7 @@ namespace APublicizer
         {
             DoPublicizeTypes(value);
             DoPublicizeNestedTypes(value);
+
             DoPublicizeFields(value);
             // Publicize events before publicizing methods cuz events are literally two methods & one field
             DoFixupEvents(value);
@@ -163,13 +164,13 @@ namespace APublicizer
 
         private void DoPublicizeTypes(PublicizeResult value) =>
             Processor<TypeDefinition>(GetTypes(),
-                (t) => !t.IsPublic,
+                (t) => !t.IsNested && !t.IsPublic,
                 (t) => t.IsPublic = true,
                 value.BumpTypes);
 
         private void DoPublicizeNestedTypes(PublicizeResult value) =>
             Processor<TypeDefinition>(GetTypes(),
-                (nt) => !nt.IsNestedPublic,
+                (nt) => nt.IsNested && !nt.IsNestedPublic,
                 (nt) => nt.IsNestedPublic = true,
                 value.BumpNestedTypes);
 
