@@ -58,6 +58,7 @@ namespace APublicizer
         public sealed class PublicizeResult
         {
             public uint Types;
+            public uint NestedTypes;
             public uint Events;
             public uint Fields;
             public uint Methods;
@@ -66,6 +67,7 @@ namespace APublicizer
             public uint Property_Getters;
 
             public void BumpTypes() => ++Types;
+            public void BumpNestedTypes() => ++NestedTypes;
             public void BumpEvents() => ++Events;
             public void BumpFields() => ++Fields;
             public void BumpMethods() => ++Methods;
@@ -98,12 +100,15 @@ namespace APublicizer
         private void DoPublicize(PublicizeResult value)
         {
             DoPublicizeTypes(value);
+            DoPublicizeNestedTypes(value);
             DoPublicizeFields(value);
-            DoPublicizeMethods(value);
+            // Publicize events before publicizing methods cuz events are literally two methods & one field
+            DoFixupEvents(value);
+            // Publicize properties before publicizing methods cuz setters/getters are methods
             DoPublicizePropertySetters(value);
             DoPublicizePropertyGetters(value);
 
-            DoFixupEvents(value);
+            DoPublicizeMethods(value);
         }
 
         #region Utility
@@ -114,18 +119,17 @@ namespace APublicizer
                 return _types;
 
             var coll = new Collection<TypeDefinition>();
-            void AddType(TypeDefinition definition)
+            void AddTypes(Collection<TypeDefinition> definitions)
             {
-                coll.Add(definition);
-
-                var types = definition.NestedTypes;
-                for (var z = 0; z < types.Count; z++)
-                    AddType(types[z]);
+                for (var z = 0; z < definitions.Count; z++)
+                {
+                    var definition = definitions[z];
+                    coll.Add(definition);
+                    AddTypes(definition.NestedTypes);
+                }
             }
 
-            var types = _assembly.MainModule.Types;
-            for (var z = 0; z < types.Count; z++)
-                AddType(types[z]);
+            AddTypes(_assembly.MainModule.Types);
 
             return _types = coll;
         }
@@ -158,10 +162,16 @@ namespace APublicizer
         #region Do
 
         private void DoPublicizeTypes(PublicizeResult value) =>
-            Processor(GetTypes(),
+            Processor<TypeDefinition>(GetTypes(),
                 (t) => t.IsNotPublic,
                 (t) => t.IsPublic = true,
                 value.BumpTypes);
+
+        private void DoPublicizeNestedTypes(PublicizeResult value) =>
+            Processor<TypeDefinition>(GetTypes(),
+                (nt) => nt.IsNestedPrivate,
+                (nt) => nt.IsPublic = true,
+                value.BumpNestedTypes);
 
         private void DoPublicizeFields(PublicizeResult value) =>
             ArrayProcessor<TypeDefinition, FieldDefinition>(GetTypes(),
