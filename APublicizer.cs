@@ -209,15 +209,8 @@ namespace APublicizer
 
         private void DoFixupEvents(PublicizeResult value)
         {
-            bool FilterEvent(EventDefinition e)
-            {
-                // It'll cause a compilation error if I don't do
-                e.DeclaringType.Fields.Single(f => f.Name == e.Name).IsPublic = false;
-                // Don't lie to users
-                value.Fields--;
-
-                return e.AddMethod.IsPrivate || e.RemoveMethod.IsPrivate || (e.InvokeMethod?.IsPrivate ?? false);
-            }
+            bool FilterEvent(EventDefinition e) =>
+                e.AddMethod.IsPrivate || e.RemoveMethod.IsPrivate || (e.InvokeMethod?.IsPrivate ?? false);
 
             void ProcessEvent(EventDefinition e)
             {
