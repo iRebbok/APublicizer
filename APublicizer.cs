@@ -209,8 +209,19 @@ namespace APublicizer
 
         private void DoFixupEvents(PublicizeResult value)
         {
-            bool FilterEvent(EventDefinition e) =>
-                e.AddMethod.IsPrivate || e.RemoveMethod.IsPrivate || (e.InvokeMethod?.IsPrivate ?? false);
+            bool FilterEvent(EventDefinition e)
+            {
+                // Sometimes, for some reason, events have the same name as their backing fields.
+                // If both are public, neither can be accessed (name conflict).
+                var backing = e.DeclaringType.Fields.SingleOrDefault(f => f.Name == e.Name);
+                if (backing != null)
+                {
+                    backing.IsPublic = false;
+                    value.Fields--;
+                }
+
+                return e.AddMethod.IsPrivate || e.RemoveMethod.IsPrivate || (e.InvokeMethod?.IsPrivate ?? false);
+            }
 
             void ProcessEvent(EventDefinition e)
             {
