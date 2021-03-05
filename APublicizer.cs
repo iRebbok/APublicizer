@@ -211,10 +211,14 @@ namespace APublicizer
         {
             bool FilterEvent(EventDefinition e)
             {
-                // It'll cause a compilation error if I don't do
-                e.DeclaringType.Fields.Single(f => f.Name == e.Name).IsPublic = false;
-                // Don't lie to users
-                value.Fields--;
+                // Sometimes, for some reason, events have the same name as their backing fields.
+                // If both are public, neither can be accessed (name conflict).
+                var backing = e.DeclaringType.Fields.SingleOrDefault(f => f.Name == e.Name);
+                if (backing != null)
+                {
+                    backing.IsPublic = false;
+                    value.Fields--;
+                }
 
                 return e.AddMethod.IsPrivate || e.RemoveMethod.IsPrivate || (e.InvokeMethod?.IsPrivate ?? false);
             }
