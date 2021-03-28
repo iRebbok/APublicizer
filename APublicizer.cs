@@ -216,7 +216,7 @@ namespace APublicizer
                 var backing = e.DeclaringType.Fields.SingleOrDefault(f => f.Name == e.Name);
                 if (backing != null)
                 {
-                    backing.IsPublic = false;
+                    backing.IsPrivate = true;
                     value.Fields--;
                 }
 
