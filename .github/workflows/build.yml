@@ -1,0 +1,98 @@
+name: 'Build'
+
+on:
+  push:
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.gitignore'
+      - '**/*.gitattributes'
+      - '**/*.editorconfig'
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.gitignore'
+      - '**/*.gitattributes'
+      - '**/*.editorconfig'
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: true
+  DOTNET_GENERATE_ASPNET_CERTIFICATE: false
+  DOTNET_ADD_GLOBAL_TOOLS_TO_PATH: false
+  DOTNET_MULTILEVEL_LOOKUP: 0
+  DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: true
+  TERM: xterm
+
+jobs:
+  build-runtime:
+    strategy:
+      matrix:
+        cfg: ['Debug', 'Release']
+        include:
+          - cfgl: debug
+            cfg: Debug
+          - cfgl: release
+            cfg: Release
+    name: Build ${{ matrix.cfg }} Runtime Image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.x
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration ${{ matrix.cfg }} --no-restore
+
+      - name: Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: runtime-${{ matrix.cfgl }}
+          path: .artifacts/build/${{ matrix.cfgl }}/*
+          if-no-files-found: error
+
+  build-native:
+    strategy:
+      matrix:
+        cfg: ['Debug', 'Release']
+        os: ['ubuntu-20.04', 'windows-2019']
+        include:
+          - cfgl: debug
+            cfg: Debug
+          - cfgl: release
+            cfg: Release
+          - rt: win-x64
+            os: windows-2019
+          - rt: linux-x64
+            os: ubuntu-20.04
+    name: Build ${{ matrix.cfg }} Native Image
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.x
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet publish --configuration ${{ matrix.cfg }} --runtime ${{ matrix.rt }} --no-restore
+
+      - name: Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: native-${{ matrix.rt }}-${{ matrix.cfgl }}
+          path: .artifacts/publish/${{ matrix.cfgl }}_${{ matrix.rt }}
+          if-no-files-found: error
