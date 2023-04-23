@@ -44,19 +44,19 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 8.x
+          dotnet-version: 8.0.100-preview.3.23178.7
 
       - name: Restore
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration ${{ matrix.cfg }} --no-restore
+        run: dotnet build --configuration ${{ matrix.cfg }} --no-restore --no-self-contained # -p:AppendRuntimeIdentifierToOutputPath=false
 
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
           name: runtime-${{ matrix.cfgl }}
-          path: .artifacts/build/${{ matrix.cfgl }}/*
+          path: .artifacts/bin/${{ matrix.cfgl }}_linux-x64/ # Hack! Property AppendRuntimeIdentifierToOutputPath will be available in next preview release.
           if-no-files-found: error
 
   build-native:
@@ -73,7 +73,7 @@ jobs:
             os: windows-2019
           - rt: linux-x64
             os: ubuntu-20.04
-    name: Build ${{ matrix.cfg }} Native Image
+    name: Build ${{ matrix.cfg }} ${{ matrix.rt }} Native Image
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -94,5 +94,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: native-${{ matrix.rt }}-${{ matrix.cfgl }}
-          path: .artifacts/publish/${{ matrix.cfgl }}_${{ matrix.rt }}
+          path: .artifacts/publish/${{ matrix.cfgl }}_${{ matrix.rt }}/
           if-no-files-found: error
