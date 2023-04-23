@@ -1,13 +1,13 @@
 # **This is .NET 8 Branch**
 ### The fist time I used AoT was .NET 5 and the feature was experimental. After that in .NET 7 they finally shipped it. The next major release, namely .NET 8, features AoT size improvements, which is currently being tested with APublicizer.
 ### You can download produced artifacts by CI [here (nightly.link)](https://nightly.link/iRebbok/APublicizer/workflows/build/dotnet8-aot), the layout is the same, except for archive extension, as of today, GitHub only supports `.zip`.
-### There is a direct link to for different artifacts
-- [native-linux-x64-release](https://nightly.link/iRebbok/APublicizer/workflows/build/dotnet8-aot/native-linux-x64-release)
-- [native-linux-x64-debug](https://nightly.link/iRebbok/APublicizer/workflows/build/dotnet8-aot/native-linux-x64-debug)
-- [native-win-x64-release](https://nightly.link/iRebbok/APublicizer/workflows/build/dotnet8-aot/native-win-x64-release)
-- [native-linux-x64-debug](https://nightly.link/iRebbok/APublicizer/workflows/build/dotnet8-aot/native-win-x64-debug)
-- [runtime-release](https://nightly.link/iRebbok/APublicizer/workflows/build/dotnet8-aot/runtime-release)
-- [runtime-debug](https://nightly.link/iRebbok/APublicizer/workflows/build/dotnet8-aot/runtime-debug)
+### There is a direct link to different artifacts
+- [native-linux-x64-release.zip](https://nightly.link/iRebbok/APublicizer/workflows/build/dotnet8-aot/native-linux-x64-release.zip)
+- [native-linux-x64-debug.zip](https://nightly.link/iRebbok/APublicizer/workflows/build/dotnet8-aot/native-linux-x64-debug.zip)
+- [native-win-x64-release.zip](https://nightly.link/iRebbok/APublicizer/workflows/build/dotnet8-aot/native-win-x64-release.zip)
+- [native-linux-x64-debug.zip](https://nightly.link/iRebbok/APublicizer/workflows/build/dotnet8-aot/native-win-x64-debug.zip)
+- [runtime-release.zip](https://nightly.link/iRebbok/APublicizer/workflows/build/dotnet8-aot/runtime-release.zip)
+- [runtime-debug.zip](https://nightly.link/iRebbok/APublicizer/workflows/build/dotnet8-aot/runtime-debug.zip)
 
 ---
 
