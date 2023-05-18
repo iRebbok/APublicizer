@@ -44,19 +44,19 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 8.0.100-preview.3.23178.7
+          dotnet-version: 8.0.100-preview.4.23260.5
 
       - name: Restore
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration ${{ matrix.cfg }} --no-restore --no-self-contained # -p:AppendRuntimeIdentifierToOutputPath=false
+        run: dotnet build --configuration ${{ matrix.cfg }} --no-restore --no-self-contained -p:AppendRuntimeIdentifierToOutputPath=false
 
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
           name: runtime-${{ matrix.cfgl }}
-          path: .artifacts/bin/${{ matrix.cfgl }}_linux-x64/ # Hack! Property AppendRuntimeIdentifierToOutputPath will be available in next preview release.
+          path: .artifacts/bin/${{ matrix.cfgl }}/
           if-no-files-found: error
 
   build-native:
