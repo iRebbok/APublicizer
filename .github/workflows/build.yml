@@ -56,7 +56,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: runtime-${{ matrix.cfgl }}
-          path: .artifacts/bin/${{ matrix.cfgl }}/
+          path: artifacts/bin/${{ matrix.cfgl }}/
           if-no-files-found: error
 
   build-native:
@@ -94,5 +94,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: native-${{ matrix.rt }}-${{ matrix.cfgl }}
-          path: .artifacts/publish/${{ matrix.cfgl }}_${{ matrix.rt }}/
+          path: artifacts/publish/${{ matrix.cfgl }}_${{ matrix.rt }}/
           if-no-files-found: error
