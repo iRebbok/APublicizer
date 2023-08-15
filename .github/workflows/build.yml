@@ -44,13 +44,13 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 8.0.100-preview.4.23260.5
+          dotnet-version: 8.x
 
       - name: Restore
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration ${{ matrix.cfg }} --no-restore --no-self-contained -p:AppendRuntimeIdentifierToOutputPath=false
+        run: dotnet build --configuration ${{ matrix.cfg }} --no-restore --no-self-contained -p:ArtifactsPivots=${{ matrix.cfgl }}
 
       - name: Upload
         uses: actions/upload-artifact@v3
@@ -94,5 +94,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: native-${{ matrix.rt }}-${{ matrix.cfgl }}
-          path: artifacts/publish/${{ matrix.cfgl }}_${{ matrix.rt }}/
+          path: artifacts/publish/APublicizer/${{ matrix.cfgl }}_${{ matrix.rt }}/
           if-no-files-found: error
