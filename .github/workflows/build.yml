@@ -56,7 +56,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: runtime-${{ matrix.cfgl }}
-          path: artifacts/bin/${{ matrix.cfgl }}/
+          path: artifacts/bin/APublicizer/${{ matrix.cfgl }}/
           if-no-files-found: error
 
   build-native:
@@ -85,7 +85,7 @@ jobs:
           dotnet-version: 8.x
 
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore -r ${{ matrix.rt }}
 
       - name: Build
         run: dotnet publish --configuration ${{ matrix.cfg }} --runtime ${{ matrix.rt }} --no-restore
