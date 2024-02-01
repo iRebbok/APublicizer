@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -9,28 +10,51 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
+    <!-- CI pipelone uses matrix so restore only needed runtime -->
+    <RuntimeIdentifier Condition="$([MSBuild]::IsOSPlatform('Windows'))">win-x64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="$([MSBuild]::IsOSPlatform('Linux'))">linux-x64</RuntimeIdentifier>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <PublishAot>true</PublishAot>
+    <PublishTrimmed>true</PublishTrimmed>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' != ''">true</ContinuousIntegrationBuild>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
 
   <!-- AoT Settings -->
-  <PropertyGroup Condition="$(NativeBuild) == 'true'">
-    <IlcInvariantGlobalization>true</IlcInvariantGlobalization>
-    <RootAllApplicationAssemblies>false</RootAllApplicationAssemblies>
+  <PropertyGroup>
+    <!-- Restrict access to culture-specific data and behavior. -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <!-- Trim all assemblies. -->
+    <TrimMode>full</TrimMode>
+    <!-- Show all detailed warnings, instead of collapsing them to a single warning per assembly. -->
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <!-- Remove BinaryFormatter serialization support. -->
+    <EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
+    <!-- Remove insecure UTF-7 encoding code. -->
+    <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
+    <!-- Remove EventSource related code or logic. -->
+    <EventSourceSupport>false</EventSourceSupport>
+    <!-- Remove code related to diagnostics support for System.Net.Http. -->
+    <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
+    <!-- Trim reflection metadata. -->
+    <IlcTrimMetadata>true</IlcTrimMetadata>
+    <!-- Preserve no type metadata. -->
     <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
-    <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+    <!-- Preserve textual names in stack traces. -->
+    <IlcGenerateStackTraceData>true</IlcGenerateStackTraceData>
+    <!-- Turn on reflection-free mode. -->
     <IlcDisableReflection>true</IlcDisableReflection>
+    <!-- Optimize for speed rather than size. -->
     <IlcOptimizationPreference>Speed</IlcOptimizationPreference>
-    <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
-    <IlcDisableUnhandledExceptionExperience>false</IlcDisableUnhandledExceptionExperience>
+    <!-- Preserve correct code path on stack traces. -->
+    <IlcFoldIdenticalMethodBodies>false</IlcFoldIdenticalMethodBodies>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Condition="$(NativeBuild) == 'true'" Include="Microsoft.DotNet.ILCompiler" Version="6.0.0-*" />
-    <PackageReference Include="Mono.Cecil" Version="0.11.3" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.5" />
   </ItemGroup>
 
 </Project>
