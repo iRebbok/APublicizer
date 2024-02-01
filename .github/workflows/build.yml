@@ -54,7 +54,7 @@ jobs:
         run: dotnet build --configuration ${{ matrix.cfg }} --no-restore --no-self-contained -p:ArtifactsPivots=${{ matrix.cfgl }}
 
       - name: Upload
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: runtime-${{ matrix.cfgl }}
           path: artifacts/bin/APublicizer/${{ matrix.cfgl }}/
